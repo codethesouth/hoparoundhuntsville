@@ -15,8 +15,8 @@ const bunyan = require('bunyan');
 const log = bunyan.createLogger({ name: 'transitTracks' });
 log.info('Bunyan initialized.');
 
-var pastStopSeq = 18;
-var nextStopSeq = 0;
+var pastStopSeq;
+var nextStopSeq;
 var possibleSkip = false;
 
 // ALL the vehicles
