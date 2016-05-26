@@ -301,7 +301,7 @@ function locationRecieved(data) {
   for (var i = 0; i < vehicles.length; i++) {
     if(vehicles[i]['id']==transitId) {
       vehicleFound = true;
-      if ((geoUtils.contains([data.lat,data.lon], geoConst.dtBounds)) || transitId === 999) {
+      if ((geoUtils.contains([data.lat,data.lon], geoConst.dtBounds)) || transitId === '999') {
         vehicles[i]['lat'] = data.lat;
         vehicles[i]['long'] = data.lon;
         //  checkStops([vehicles[i]['lat'],vehicles[i]['long']]);
