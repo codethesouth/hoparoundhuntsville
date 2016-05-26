@@ -301,22 +301,21 @@ function locationRecieved(data) {
   for (var i = 0; i < vehicles.length; i++) {
     if(vehicles[i]['id']==transitId) {
       vehicleFound = true;
-      if ((geoUtils.contains([data.lat,data.lon], geoConst.dtBounds)) || transitId === '999') {
+      if ((geoUtils.contains([data.lat,data.lon], geoConst.dtBounds)) || transitId === 999) {
         vehicles[i]['lat'] = data.lat;
         vehicles[i]['long'] = data.lon;
         //  checkStops([vehicles[i]['lat'],vehicles[i]['long']]);
         returnStr = returnStr.concat("location updated");
       } else {
         returnStr = returnStr.concat("location update failed");
-        console.log('Invalid location update');
       }
     }
   }
   if (vehicleFound === false) {
     vehicles.push({'id': transitId, 'lat': data.lat, 'long': data.lon});
     returnStr = "new bus location added";
-    console.log(returnStr);
   }
+  console.log(returnStr);
   return returnStr;
 }
 
