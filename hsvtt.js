@@ -293,11 +293,10 @@ function checkTime() {
 }
 --------------------------------------------------------------------*/
 function locationRecieved(data) {
-  console.log('location data recieved from beacon ' + data.id + ' : ' + data.lat + ' - ' + data.lon);
   var returnStr = 'location socket called: ';
   var transitId = data.id;
   var vehicleFound = false;
-  console.log(`here: ${data.id} : ${data.lat} - ${data.lon}`); 
+  //console.log(`here: ${data.id} : ${data.lat} - ${data.lon}`); 
   for (var i = 0; i < vehicles.length; i++) {
     if(vehicles[i]['id']==transitId) {
       vehicleFound = true;
