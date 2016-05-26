@@ -12,6 +12,7 @@ HSV_TT.sockets.init = function() {
       if(data[i].lat && data[i].long) {		
 	    location.lat = data[i].lat;
 	    location.lng = data[i].long;
+		console.log(location['lat'] + ':' + location['lng']);
 	    HSV_TT.map.updateLocationMarker(data[i].id, location);
 	  } else {
 		console.log(location['lat'] + ':' + location['lng'] + " remove marker: " + data[i].id);
@@ -19,6 +20,7 @@ HSV_TT.sockets.init = function() {
 		HSV_TT.removeBusMapMarker(data[i].id);
 	  }
 	}
+	
   };
   
   function receiveUpdates() {
