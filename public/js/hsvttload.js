@@ -5,9 +5,9 @@ function bus(id, marker) {
   this.marker = marker;
 }
 
-var buses = [];
+const buses = [];
 
-$(document).ready(function() {
+$(document).ready(() => {
   HSV_TT.fitWindow();
   $("#slideMenu").click(function() {
     if ($("#menuPopup").css("display") != "none") {
@@ -28,11 +28,11 @@ $(document).ready(function() {
     }
   });
 
-  $(document).on("click", "#schedule", function() {
+  $(document).on("click", "#schedule", () => {
     HSV_TT.showSchedule();
   });
 
-  $(document).on("click", "#scheduleItem", function() {
+  $(document).on("click", "#scheduleItem", () => {
     HSV_TT.showSchedule();
   });
 
@@ -40,32 +40,32 @@ $(document).ready(function() {
     HSV_TT.locateStop($(this).attr("data"));
   });
 
-  $(document).on("click", "#aboutItem", function() {
+  $(document).on("click", "#aboutItem", () => {
     $("#menuPopup").css("display", "block");
     $(".leaflet-bottom").css("display", "none");
     $(".popupContent").css("display", "none");
     $("#about").css("display", "block");
   });
 
-  $(document).on("click", "#sponsorsItem", function() {
+  $(document).on("click", "#sponsorsItem", () => {
     $("#menuPopup").css("display", "block");
     $(".leaflet-bottom").css("display", "none");
     $(".popupContent").css("display", "none");
     $("#sponsors").css("display", "block");
   });
 
-  $(document).on("click", "#disPage", function() {
+  $(document).on("click", "#disPage", () => {
     $("#menuPopup").css("display", "block");
     $(".leaflet-bottom").css("display", "none");
     $(".popupContent").css("display", "none");
     $("#terms").css("display", "block");
   });
 
-  $(document).on("click tap", "#menuPopup img", function() {
+  $(document).on("click tap", "#menuPopup img", () => {
     HSV_TT.closeMenu();
   });
 
-  $(document).on("swipeleft swiperight", "#menuPopup", function() {
+  $(document).on("swipeleft swiperight", "#menuPopup", () => {
     HSV_TT.closeMenu();
   });
 
@@ -80,13 +80,13 @@ $(document).ready(function() {
 });
 
 function onMapClick(e) {
-  console.log("[" + e.latlng.toString() + "]");
+  console.log(`[${e.latlng.toString()}]`);
 }
 
 HSV_TT.fitWindow = function() {
-  var bh = $("body").height();
-  var chh = $("#contentHead").height();
-  var ch = $("#content").height();
+  const bh = $("body").height();
+  const chh = $("#contentHead").height();
+  const ch = $("#content").height();
 
   $("#transitMap").height(bh - (chh + ch));
 };
@@ -106,7 +106,7 @@ HSV_TT.locateStop = function(data) {
 
 HSV_TT.getBusMapMarker = function(vid) {
   retObj = null;
-  for (var i = 0; i < buses.length; i++) {
+  for (let i = 0; i < buses.length; i++) {
     if (buses[i].id === vid) {
       rt = buses[i].marker;
       retObj = rt;
@@ -116,8 +116,8 @@ HSV_TT.getBusMapMarker = function(vid) {
 };
 
 HSV_TT.getBusIndexMarker = function(vid) {
-  var retn = null;
-  for (var i = 0; i < buses.length; i++) {
+  let retn = null;
+  for (let i = 0; i < buses.length; i++) {
     if (buses[i].id === vid) {
       retn = i;
     }
@@ -131,7 +131,7 @@ HSV_TT.putBusMapMarker = function(vid, mapMarker) {
 };
 
 HSV_TT.removeBusMapMarker = function(vid) {
-  var indx = HSV_TT.getBusIndexMarker(vid);
+  const indx = HSV_TT.getBusIndexMarker(vid);
   if (indx > -1) {
     buses.splice(indx, 1);
   }

@@ -1,34 +1,42 @@
 // Getting all dependencies
 const express = require("express");
+
 const app = express();
 const mongoose = require("mongoose");
-const geoConst = require("./data/geoConst.json");
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const bodyParser = require("body-parser");
+const bunyan = require("bunyan");
 const geoUtils = require("./lib/geoutils");
 const schedule = require("./lib/cronSchedules");
 
 // Proper logging
-const bunyan = require("bunyan");
+const geoConst = require("./data/geoConst.json");
+
 const log = bunyan.createLogger({ name: "transitTracks" });
 log.info("Bunyan initialized.");
 
-var pastStopSeq = 0;
-var nextStopSeq = 1;
-var possibleSkip = false;
+let pastStopSeq = 0;
+let nextStopSeq = 1;
+const possibleSkip = false;
 
 // ALL the vehicles
-var vehicles = [];
+const vehicles = [];
 
 // Setup DB
 const mongoUser = process.env.MONGO_USERNAME;
 const mongoPass = process.env.MONGO_PASSWORD;
 const connectionString = process.env.MONGO_CONN_STRING;
-const mongoUrl = connectionString !== null ? connectionString : `mongodb://${mongoUser}:${mongoPass}@localhost:27017/hsvtransit`;
-mongoose.connect(mongoUrl, {
-  useMongoClient: true
-});
+const mongoUrl =
+  connectionString !== null
+    ? connectionString
+    : `mongodb://${mongoUser}:${mongoPass}@localhost:27017/hsvtransit`;
+mongoose.connect(
+  mongoUrl,
+  {
+    useMongoClient: true
+  }
+);
 
 // Shuttle/trolly/auto DB setup
 const transitSchema = new mongoose.Schema({
@@ -38,7 +46,7 @@ const transitSchema = new mongoose.Schema({
 });
 const Transit = mongoose.model("Transit", transitSchema);
 
-var allLocations = [];
+const allLocations = [];
 
 // Event DB structure
 const eventSchema = new mongoose.Schema({
@@ -90,7 +98,7 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => {
   res.render("pages/index");
   Stats.find({ id: 0 }, (err, stat) => {
-    var statContents = stat;
+    const statContents = stat;
     if (statContents[0]) {
       statContents[0].hits += 1;
       statContents[0].save();
@@ -115,10 +123,10 @@ app.get("/stats", (req, res) => {
 
 // Adds location
 app.post("/api/v1/trolly/:id/location", (req, res) => {
-  var returnStr = "location api called ";
-  var transitId = req.params.id;
-  var vehicleFound = false;
-  for (var i = 0; i < vehicles.length; i++) {
+  let returnStr = "location api called ";
+  const transitId = req.params.id;
+  let vehicleFound = false;
+  for (let i = 0; i < vehicles.length; i++) {
     if (vehicles[i].id === transitId) {
       vehicleFound = true;
       if (geoUtils.contains([req.body.lat, req.body.lon], geoConst.dtBounds)) {
@@ -140,20 +148,20 @@ app.post("/api/v1/trolly/:id/location", (req, res) => {
   res.send(returnStr);
 });
 
-var latLng = [];
-var locations;
-var latLongs = {};
+const latLng = [];
+let locations;
+const latLongs = {};
 
 function checkStops(curPnt) {
   // for each in stop array
-  var sb = null;
-  var ns = nextStopSeq;
-  var len = geoConst.dtStopArray.length - 1;
-  var advance = false;
-  var fin = false;
+  const sb = null;
+  let ns = nextStopSeq;
+  const len = geoConst.dtStopArray.length - 1;
+  let advance = false;
+  const fin = false;
 
-  for (var i = 0; i < len && !advance; ++i) {
-    var test_b = geoUtils.setStopBounds(ns - 1);
+  for (let i = 0; i < len && !advance; ++i) {
+    const test_b = geoUtils.setStopBounds(ns - 1);
     if (geoUtils.contains(curPnt, test_b)) {
       advance = nextStopSeq === i;
 
@@ -161,7 +169,7 @@ function checkStops(curPnt) {
         pastStopSeq = i;
         nextStopSeq = i + 1;
         console.log(`advancing stop seq = ${nextStopSeq} : ${pastStopSeq}`);
-        var data = { seq: nextStopSeq, route: "Downtown", id: 0 };
+        const data = { seq: nextStopSeq, route: "Downtown", id: 0 };
         io.emit("next stop", data);
         return;
       }
@@ -172,19 +180,21 @@ function checkStops(curPnt) {
 }
 
 function locationRecieved(data) {
-  var returnStr = "location socket called: ",
-    transitId = data.id,
-    vehicleFound = false;
+  let returnStr = "location socket called: ";
 
-  for (var i = 0; i < vehicles.length; i++) {
-    if (vehicles[i]["id"] == transitId) {
+  const transitId = data.id;
+
+  let vehicleFound = false;
+
+  for (let i = 0; i < vehicles.length; i++) {
+    if (vehicles[i].id == transitId) {
       vehicleFound = true;
       if (
         geoUtils.contains([data.lat, data.lon], geoConst.dtBounds) ||
         transitId === "999"
       ) {
-        vehicles[i]["lat"] = data.lat;
-        vehicles[i]["long"] = data.lon;
+        vehicles[i].lat = data.lat;
+        vehicles[i].long = data.lon;
         returnStr = returnStr.concat("location updated");
       } else {
         returnStr = returnStr.concat("location update failed");
@@ -203,13 +213,13 @@ function locationRecieved(data) {
 function isTrolleyInactive() {
   // would like to extend this to start at 4pm and end at 1am following morning... of course
   // that complicates the testing
-  var trolleyInactive = true; // named the variable for readability
-  var date = new Date();
+  let trolleyInactive = true; // named the variable for readability
+  const date = new Date();
   date.setHours(date.getHours()); // minus 6 from UTC time - CHANGE for DAYLIGHT/STANDARD TIME
-  console.log("hour: " + date.getHours() + ", day: " + date.getDay());
+  console.log(`hour: ${date.getHours()}, day: ${date.getDay()}`);
 
   if (date.getDay() === 5 && date.getHours() <= 24 && date.getHours() >= 16) {
-    console.log("first test: " + trolleyInactive);
+    console.log(`first test: ${trolleyInactive}`);
     trolleyInactive = false;
   }
 
@@ -223,37 +233,35 @@ function isTrolleyInactive() {
   }
 
   if (trolleyInactive && date.getDay() == 0 && date.getHours() == 0) {
-    console.log("third test: " + trolleyInactive);
+    console.log(`third test: ${trolleyInactive}`);
     trolleyInactive = false;
   }
   return trolleyInactive;
 }
 
 // Everything socket.io related
-io.sockets.on("connection", function(socket) {
-  console.log("id: " + socket.id + " address: " + socket.handshake.address);
+io.sockets.on("connection", socket => {
+  console.log(`id: ${socket.id} address: ${socket.handshake.address}`);
   // TODO will need an flag set if the connection is from beacon or client user ---
 
   io.emit("made connect", { nextSeq: nextStopSeq, greet: "hello there" }); // sent to client user
 
   //  BEACON listerns won't hear anything until sockets on the beacon is implementation-----
-  socket.on("bus:connect", function(data) {
-    console.log("bus connected: " + data.id + " : " + data.pw);
+  socket.on("bus:connect", data => {
+    console.log(`bus connected: ${data.id} : ${data.pw}`);
     console.log(
-      "bus connected: " + socket.id + " address: " + socket.handshake.address
+      `bus connected: ${socket.id} address: ${socket.handshake.address}`
     );
   });
-  socket.on("bus:location", function(data) {
+  socket.on("bus:location", data => {
     //  bus:location
-    console.log(
-      "location update: " + data.id + " : " + data.lat + " - " + data.lon
-    );
+    console.log(`location update: ${data.id} : ${data.lat} - ${data.lon}`);
     locationRecieved(data);
     //  TODO update vehicles here...;
   });
   //  --------------------------------------------------------------------------------------------
 
-  socket.on("get location", function(data) {
+  socket.on("get location", data => {
     // console.log('location update requested ');
     if (false) {
       console.log("Sending dormant signal");
@@ -263,13 +271,12 @@ io.sockets.on("connection", function(socket) {
       io.emit("location update", vehicles);
     }
   });
-  socket.on("disconnect", function() {
+  socket.on("disconnect", () => {
     console.log("User disconnected");
-    UserConn.find({ id: socket.id }, function(err, uc) {
+    UserConn.find({ id: socket.id }, (err, uc) => {
       returnStr = "updating connection";
       if (uc[0]) {
-        returnStr =
-          "Recording user connection diconnect: " + uc[0].cipaddr + " - ";
+        returnStr = `Recording user connection diconnect: ${uc[0].cipaddr} - `;
         uc[0].connEnd = new Date();
         uc[0].save();
         returnStr = returnStr.concat("db updated");
@@ -281,7 +288,7 @@ io.sockets.on("connection", function(socket) {
   });
 });
 
-/********************************************************
+/** ******************************************************
  *   Admin Functionality
  *   WARNING: Suspending development of section indefinitely
  *   ******************************************************* */
@@ -300,7 +307,7 @@ app.get('/admin/addevent', function(req, res) {
 // Opening server to requests
 http.listen(app.get("port"), () => {
   console.log("Node app is running on port ", app.get("port"));
-  var d = new Date();
+  const d = new Date();
   d.setHours(d.getHours());
   log.info(`Time: ${d.getTime()}, Day: ${d.getDay()}, Hour: ${d.getHours()}`);
 });

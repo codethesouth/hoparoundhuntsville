@@ -1,9 +1,9 @@
 HSV_TT.map = {};
 
-var map = null;
+let map = null;
 
 // this needs to go in JSON file... ------------
-var routeNames = [["Downtown", "green"]];
+const routeNames = [["Downtown", "green"]];
 //                need to coordinate route color scheme with city transit scheme....
 //                ['Blue Coreloop','blue'],['Red Coreloop','red'],['Route 3',someColor],
 //                ['Route 4',someColor],['Route 5',someColor],['Route 6',someColor],
@@ -11,13 +11,13 @@ var routeNames = [["Downtown", "green"]];
 //                ['UAH',someColor];
 //----------------------------------------------
 
-var routeLayers = [];
-var stopLocationCircle = null;
-var nextStopMark = null;
+const routeLayers = [];
+let stopLocationCircle = null;
+let nextStopMark = null;
 
-var trolleyHomeLocation = { latlng: { lat: 34.73689, lng: -86.59192 } };
-var locationOfQuery = null;
-var trolleyIcon = L.Icon.Default.extend({
+const trolleyHomeLocation = { latlng: { lat: 34.73689, lng: -86.59192 } };
+const locationOfQuery = null;
+const trolleyIcon = L.Icon.Default.extend({
   options: {
     iconUrl: "/images/trolleyIcon3.png",
     iconSize: [25, 30],
@@ -25,7 +25,7 @@ var trolleyIcon = L.Icon.Default.extend({
     popupAnchor: [1, -30]
   }
 });
-var testIcon = L.Icon.Default.extend({
+const testIcon = L.Icon.Default.extend({
   options: {
     iconUrl: "/images/testIcon.png",
     iconSize: [15, 20],
@@ -33,7 +33,7 @@ var testIcon = L.Icon.Default.extend({
     popupAnchor: [1, -20]
   }
 });
-var shuttleIcon = L.Icon.Default.extend({
+const shuttleIcon = L.Icon.Default.extend({
   options: {
     iconUrl: "/images/shuttleIcon.png",
     iconSize: [25, 30],
@@ -42,7 +42,7 @@ var shuttleIcon = L.Icon.Default.extend({
   }
 });
 // custom marker's icon styles
-var tinyIcon = L.Icon.extend({
+const tinyIcon = L.Icon.extend({
   options: {
     shadowUrl: "/images/marker-shadow.png",
     iconSize: [25, 39],
@@ -52,12 +52,12 @@ var tinyIcon = L.Icon.extend({
     popupAnchor: [0, -30]
   }
 });
-var redIcon = new tinyIcon({ iconUrl: "/images/marker-red.png" });
-var yellowIcon = new tinyIcon({ iconUrl: "/images/marker-yellow.png" });
+const redIcon = new tinyIcon({ iconUrl: "/images/marker-red.png" });
+const yellowIcon = new tinyIcon({ iconUrl: "/images/marker-yellow.png" });
 
 HSV_TT.map.init = function() {
   map = L.map("transitMap").setView([34.731, -86.588], 15);
-  var stopIcon = L.Icon.Default.extend({
+  const stopIcon = L.Icon.Default.extend({
     options: {
       iconUrl: "/images/stopIcon4.png",
       iconSize: [13, 15],
@@ -79,33 +79,32 @@ HSV_TT.map.init = function() {
     }
   ).addTo(map);
 
-  var overlayMaps = HSV_TT.map.createRouteLayers(routeNames);
+  const overlayMaps = HSV_TT.map.createRouteLayers(routeNames);
 
   //---------------------------------------------------
   // TODO this is awkward - change at some point
-  overlayMaps["Downtown"].bindPopup(
+  overlayMaps.Downtown.bindPopup(
     "<b>Entertainment Trolley Route</b>" +
       "<br><b>Hours of Operation:</b> 5pm to 12am Fridays and Saturdays"
   );
   //---------------------------------------------------
 
-  var stops = L.geoJson(HSV_TT.ui.getStops("Downtown"), {
-    pointToLayer: function(feature, latlng) {
+  const stops = L.geoJson(HSV_TT.ui.getStops("Downtown"), {
+    pointToLayer(feature, latlng) {
       return L.marker(latlng, { icon: new stopIcon() });
     },
-    onEachFeature: function(feature, layer) {
+    onEachFeature(feature, layer) {
       layer.bindPopup(
-        "<b>Stop:</b> " +
-          feature.properties.Stop_Sequence +
-          "<br><b>Scheduled Time:</b> " +
-          feature.properties.Time_ +
-          "<br><b>Location:</b> " +
-          feature.properties.Stop_Location
+        `<b>Stop:</b> ${
+          feature.properties.Stop_Sequence
+        }<br><b>Scheduled Time:</b> ${
+          feature.properties.Time_
+        }<br><b>Location:</b> ${feature.properties.Stop_Location}`
       );
     }
   });
   stops.addTo(map);
-  map.addLayer(overlayMaps["Downtown"]); // will work with an array of route names
+  map.addLayer(overlayMaps.Downtown); // will work with an array of route names
   L.control.locate().addTo(map);
 };
 
@@ -146,7 +145,7 @@ function getStopBounds(pnt) {
 }
 
 HSV_TT.map.updateLocationMarker = function(vid, latlng) {
-  //console.log("Bus number: " + vid + " has new location: " + latlng.lat +", " + latlng.lng);
+  // console.log("Bus number: " + vid + " has new location: " + latlng.lat +", " + latlng.lng);
   var mm = HSV_TT.getBusMapMarker(vid);
   if (mm) {
     mm.setLatLng(latlng).update();
@@ -160,29 +159,29 @@ HSV_TT.map.updateLocationMarker = function(vid, latlng) {
       var mm = L.marker([latlng.lat, latlng.lng], {
         icon: new testIcon()
       }).addTo(map);
-      mm.bindPopup("Test Vehicle id = " + vid);
+      mm.bindPopup(`Test Vehicle id = ${vid}`);
     } else {
       var mm = L.marker([latlng.lat, latlng.lng], {
         icon: new shuttleIcon()
       }).addTo(map);
-      mm.bindPopup("Shuttle bus number " + vid);
+      mm.bindPopup(`Shuttle bus number ${vid}`);
     }
     HSV_TT.putBusMapMarker(vid, mm);
   }
 };
 
 HSV_TT.map.removeLocationMarker = function(vid) {
-  var mm = HSV_TT.getBusMapMarker(vid);
+  const mm = HSV_TT.getBusMapMarker(vid);
   if (mm) {
-    //mm.clearLayers();
+    // mm.clearLayers();
     map.removeLayer(mm);
   }
 };
 
 HSV_TT.map.createRouteLayers = function(routeNames) {
-  var obj = {};
-  for (var i = 0; i < routeNames.length; i++) {
-    var rnom = routeNames[i][0];
+  const obj = {};
+  for (let i = 0; i < routeNames.length; i++) {
+    const rnom = routeNames[i][0];
 
     obj[rnom] = L.geoJson(HSV_TT.ui.getRoutes(rnom), {
       style: {
@@ -197,32 +196,35 @@ HSV_TT.map.createRouteLayers = function(routeNames) {
 
 // this function does not order the routes correctly don't use
 HSV_TT.map.getRouteNames = function() {
-  var flags = [],
-    output = [],
-    l = allRoutes.features.length,
-    i;
+  const flags = [];
+
+  const output = [];
+
+  const l = allRoutes.features.length;
+
+  let i;
   for (i = 0; i < l; i++) {
     if (flags[allRoutes.features[i].properties.routename]) continue;
     flags[allRoutes.features[i].properties.routename] = true;
     output.push(allRoutes.features[i].properties.routename);
   }
-  console.log("Names: " + output);
+  console.log(`Names: ${output}`);
 };
 
 HSV_TT.map.markUserPosition = function(lat, lng, userId) {
-  var userMarker = L.marker([lat, lng], {
+  const userMarker = L.marker([lat, lng], {
     icon: redIcon
   });
 
   userMarker.addTo(map);
   userMarker
-    .bindPopup("<p>You are there! Your ID is " + userId + "</p>")
+    .bindPopup(`<p>You are there! Your ID is ${userId}</p>`)
     .openPopup();
 };
 
 HSV_TT.map.setMarker = function(data) {
-  for (var i = 0; i < data.coords.length; i++) {
-    var marker = L.marker([data.coords[i].lat, data.coords[i].lng], {
+  for (let i = 0; i < data.coords.length; i++) {
+    const marker = L.marker([data.coords[i].lat, data.coords[i].lng], {
       icon: yellowIcon
     }).addTo(map);
     marker.bindPopup("<p>One more external user is here!</p>");
