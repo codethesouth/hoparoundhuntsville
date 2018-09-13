@@ -306,10 +306,11 @@ app.get('/admin/addevent', function(req, res) {
 
 // Opening server to requests
 http.listen(app.get("port"), () => {
-  console.log("Node app is running on port ", app.get("port"));
   const d = new Date();
   d.setHours(d.getHours());
   log.info(`Time: ${d.getTime()}, Day: ${d.getDay()}, Hour: ${d.getHours()}`);
+
+  console.log("Application is running on port", app.get("port"));
 });
 
 log.info(`Trolley Home: ${geoConst.trolleyHome}`);
