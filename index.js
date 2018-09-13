@@ -24,8 +24,11 @@ var vehicles = [];
 // Setup DB
 const mongoUser = process.env.MONGO_USERNAME;
 const mongoPass = process.env.MONGO_PASSWORD;
-const mongoUrl = `mongodb://${mongoUser}:${mongoPass}@localhost:27017/hsvtransit`;
-mongoose.connect(mongoUrl);
+const connectionString = process.env.MONGO_CONN_STRING;
+const mongoUrl = connectionString !== null ? connectionString : `mongodb://${mongoUser}:${mongoPass}@localhost:27017/hsvtransit`;
+mongoose.connect(mongoUrl, {
+  useMongoClient: true
+});
 
 // Shuttle/trolly/auto DB setup
 const transitSchema = new mongoose.Schema({
