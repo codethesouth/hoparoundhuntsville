@@ -4,26 +4,22 @@
   "description": "A public transit tracking API",
   "repository": {
     "type": "git",
-    "url": "https://github.com/codeforhuntsville/transitTracks"
+    "url": "https://github.com/codethesouth/trolleytracking"
   },
-  "main": "hsvtt.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node hsvtt.js",
+    "start": "node index.js",
     "lint": "eslint ."
   },
   "dependencies": {
     "body-parser": "^1.3.5",
     "bunyan": "^1.8.1",
-    "coffee-script": "^1.10.0",
-    "connect": "^3.4.1",
     "cron": "^1.1.0",
     "ejs": "^2.3.1",
-    "eslint": "^2.10.2",
     "express": "^4.13.4",
     "express-session": "^1.11.3",
     "google-auth-library": "^0.9.7",
     "googleapis": "^2.1.6",
-    "jade": "^1.11.0",
     "mongoose": "^4.2.5",
     "postmark": "^1.2.1",
     "socket.io": "^1.3.6"
@@ -36,8 +32,9 @@
     "heroku",
     "express"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
+    "eslint": "^2.10.2",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.8.0",
     "eslint-plugin-jsx-a11y": "^1.2.2",

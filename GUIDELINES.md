@@ -1,9 +1,9 @@
 *These guidelines are in beta*
 
-All Code for Huntsville projects are encoureged to the MEAN stack (MongoDB,
-ExpressJS, AngularJS, NodeJS)
+All Code the South projects are encoureged to follow the MERN stack (MongoDB,
+ExpressJS, ReactJS, NodeJS)
 
-All indentations should use 2 spaces.
+All indentations should use 4 spaces.
 
 Imported packages and other unchanging values should be assigned to "const"
 variables instead of variables of type "var".
