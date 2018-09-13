@@ -1,6 +1,16 @@
 {
-    "extends": "airbnb",
+    "extends": [
+        "react-app",
+        "plugin:jsx-a11y/recommended",
+        "prettier",
+        "prettier/flowtype",
+        "prettier/react"
+    ],
     "plugins": [
-        "react"
-    ]
+        "jsx-a11y",
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": "error"
+    }
 }
