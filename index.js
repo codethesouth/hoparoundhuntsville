@@ -262,12 +262,12 @@ io.sockets.on("connection", socket => {
   //  --------------------------------------------------------------------------------------------
 
   socket.on("get location", data => {
-    // console.log('location update requested ');
+    // location update requested
     if (false) {
       console.log("Sending dormant signal");
       io.emit("trolley off", [0, 0]);
     } else {
-      console.log("Sending coordinates");
+      // sending coordinates
       io.emit("location update", vehicles);
     }
   });
