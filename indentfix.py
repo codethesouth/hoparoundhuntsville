@@ -1,6 +1,6 @@
 import sys
 
-fileName = "hsvtt.js"
+fileName = "index.js"
 
 try:
   fileName = sys.argv[1]
